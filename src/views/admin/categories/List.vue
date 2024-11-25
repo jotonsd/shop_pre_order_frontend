@@ -27,7 +27,7 @@
               <td>{{ category.description }}</td>
               <td class="text-center">
                 <button @click="categoryStore.getCategory(category.id)" class="btn btn-sm btn-info me-1">Edit</button>
-                <button @click="categoryStore.deleteCatetory(category.id)" class="btn btn-sm btn-danger">Delete</button>
+                <button @click="categoryStore.deleteCategory(category.id)" class="btn btn-sm btn-danger">Delete</button>
               </td>
             </tr>
           </tbody>
