@@ -75,5 +75,19 @@ export const useCategoryStore = defineStore("CategoryStore", {
         router.push({ name: "categories" });
       }
     },
+
+    async deleteCatetory(id) {
+      this.isLoading = ref(true);
+      const data = await categoryService.deleteCategory(id);
+
+      if (data.success === false) {
+        this.errors = data.errors;
+        this.isLoading = ref("");
+      } else {
+        this.successMessage = "Category deleted successfully!";
+        this.isLoading = ref("");
+        router.push({ name: "categories" });
+      }
+    },
   },
 });

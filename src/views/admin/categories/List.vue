@@ -27,7 +27,7 @@
               <td>{{ category.description }}</td>
               <td class="text-center">
                 <button @click="categoryStore.getCategory(category.id)" class="btn btn-sm btn-info me-1">Edit</button>
-                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
+                <button @click="categoryStore.deleteCatetory(category.id)" class="btn btn-sm btn-danger">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -42,7 +42,8 @@
             </li>
 
             <!-- Page Numbers -->
-            <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: categoryStore.currentPage === page }">
+            <li class="page-item" v-for="page in totalPages" :key="page"
+              :class="{ active: categoryStore.currentPage === page }">
               <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
             </li>
 
