@@ -2,8 +2,6 @@ const API_URL = "/api";
 
 const apiToken = localStorage.getItem("token");
 
-console.log(apiToken);
-
 class ApiClient {
   constructor() {
     this.baseURL = API_URL;

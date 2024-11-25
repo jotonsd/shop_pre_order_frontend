@@ -1,8 +1,8 @@
-<script setup>
-</script>
-
 <template>
     <div class="container">
+        <Loader :isLoading="userStore.isLoading === true" />
+        <!-- Your content goes here -->
+        <Alert v-if="userStore.successMessage" :type="'success'" :message="userStore.successMessage" />
         <div class="card mt-3">
             <div class="card-header d-flex justify-content-between">
                 User List
@@ -21,37 +21,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row" class="text-center">1</th>
-                            <td>Admin</td>
-                            <td>Joton Sutradhar</td>
-                            <td>jotonsutradharjoy@gmail.com</td>
+                        <tr v-for="(user, index) in userStore.users" :key="user.id">
+                            <th scope="row" class="text-center">{{ ++index }}</th>
+                            <td>{{ user.role }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
                             <td class="text-center">
-                                <router-link :to="{ name: 'updateUser', params: { id: 1 } }"
-                                    class="btn btn-sm btn-info me-1">Edit</router-link>
-                                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="text-center">2</th>
-                            <td>Xiomi</td>
-                            <td>Xiomi Mi A3</td>
-                            <td>This is text Description</td>
-                            <td class="text-center">
-                                <router-link :to="{ name: 'updateUser', params: { id: 2 } }"
-                                    class="btn btn-sm btn-info me-1">Edit</router-link>
-                                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="text-center">3</th>
-                            <td>Samsung</td>
-                            <td>Samsung S23</td>
-                            <td>This is text Description</td>
-                            <td class="text-center">
-                                <router-link :to="{ name: 'updateUser', params: { id: 3 } }"
-                                    class="btn btn-sm btn-info me-1">Edit</router-link>
-                                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
+                                <button @click="userStore.getUser(user.id)"
+                                    class="btn btn-sm btn-info me-1">Edit</button>
+                                <button @click="userStore.deleteUser(user.id)"
+                                    class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -60,14 +39,22 @@
             <div class="card-footer">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-end">
-                        <li class="page-item disabled">
-                            <a class="page-link">Previous</a>
+                        <!-- Previous Button -->
+                        <li class="page-item" :class="{ disabled: userStore.currentPage === 1 }">
+                            <a class="page-link" href="#"
+                                @click.prevent="changePage(userStore.currentPage - 1)">Previous</a>
                         </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
+
+                        <!-- Page Numbers -->
+                        <li class="page-item" v-for="page in totalPages" :key="page"
+                            :class="{ active: userStore.currentPage === page }">
+                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+
+                        <!-- Next Button -->
+                        <li class="page-item" :class="{ disabled: userStore.currentPage === userStore.lastPage }">
+                            <a class="page-link" href="#"
+                                @click.prevent="changePage(userStore.currentPage + 1)">Next</a>
                         </li>
                     </ul>
                 </nav>
@@ -75,6 +62,34 @@
         </div>
     </div>
 </template>
+
+<script setup>
+import Alert from '@/components/Alert.vue';
+import Loader from '@/components/Loader.vue';
+import { useUserStore } from '@/stores/userStore';
+import { onMounted, ref, watchEffect } from 'vue';
+
+const userStore = useUserStore();
+const totalPages = ref([]);
+
+// Load users on component mount
+onMounted(() => {
+    userStore.getUsers();
+});
+
+watchEffect(() => {
+  if (userStore.lastPage > 1) {
+    totalPages.value = Array.from({ length: userStore.lastPage }, (_, index) => index + 1);
+  }
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= userStore.lastPage) {
+    userStore.getUsers(page);
+  }
+};
+
+</script>
 
 <style scoped>
 ul,
