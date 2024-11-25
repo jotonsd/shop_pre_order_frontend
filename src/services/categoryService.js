@@ -5,6 +5,10 @@ class CategoryService {
     return await apiClient.get(`/categories?page=${page}`);
   }
 
+  async getAllCategories() {
+    return await apiClient.get(`/categories-all`);
+  }
+
   async getCategory(id) {
     return await apiClient.get(`/categories/` + id);
   }

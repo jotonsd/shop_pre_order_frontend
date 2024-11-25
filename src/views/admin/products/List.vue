@@ -1,12 +1,11 @@
-<script setup>
-</script>
-
 <template>
     <div class="container">
+        <Loader :isLoading="productStore.isLoading === true" />
+        <!-- Your content goes here -->
+        <Alert v-if="productStore.successMessage" :type="'success'" :message="productStore.successMessage" />
         <div class="card mt-3">
             <div class="card-header d-flex justify-content-between">
                 Product List
-
                 <router-link :to="{ name: 'createProduct' }" class="btn btn-sm btn-success">Create
                     Product</router-link>
             </div>
@@ -23,40 +22,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row" class="text-center">1</th>
-                            <td>Apple</td>
-                            <td>Apple 13 Pro</td>
-                            <td>This is text Description</td>
-                            <td>150000</td>
+                        <tr v-for="(product, index) in productStore.products" :key="product.id">
+                            <th scope="row" class="text-center">{{ ++index }}</th>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.description }}</td>
+                            <td>{{ product.price }}</td>
                             <td class="text-center">
-                                <router-link :to="{ name: 'updateProduct', params: { id: 1 } }"
-                                    class="btn btn-sm btn-info me-1">Edit</router-link>
-                                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="text-center">2</th>
-                            <td>Xiomi</td>
-                            <td>Xiomi Mi A3</td>
-                            <td>This is text Description</td>
-                            <td>160000</td>
-                            <td class="text-center">
-                                <router-link :to="{ name: 'updateProduct', params: { id: 2 } }"
-                                    class="btn btn-sm btn-info me-1">Edit</router-link>
-                                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="text-center">3</th>
-                            <td>Samsung</td>
-                            <td>Samsung S23</td>
-                            <td>This is text Description</td>
-                            <td>160000</td>
-                            <td class="text-center">
-                                <router-link :to="{ name: 'updateProduct', params: { id: 3 } }"
-                                    class="btn btn-sm btn-info me-1">Edit</router-link>
-                                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
+                                <button @click="productStore.getProduct(product.id)"
+                                    class="btn btn-sm btn-info me-1">Edit</button>
+                                <button @click="productStore.deleteProduct(product.id)"
+                                    class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -65,14 +41,22 @@
             <div class="card-footer">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-end">
-                        <li class="page-item disabled">
-                            <a class="page-link">Previous</a>
+                        <!-- Previous Button -->
+                        <li class="page-item" :class="{ disabled: productStore.currentPage === 1 }">
+                            <a class="page-link" href="#"
+                                @click.prevent="changePage(productStore.currentPage - 1)">Previous</a>
                         </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
+
+                        <!-- Page Numbers -->
+                        <li class="page-item" v-for="page in totalPages" :key="page"
+                            :class="{ active: productStore.currentPage === page }">
+                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+
+                        <!-- Next Button -->
+                        <li class="page-item" :class="{ disabled: productStore.currentPage === productStore.lastPage }">
+                            <a class="page-link" href="#"
+                                @click.prevent="changePage(productStore.currentPage + 1)">Next</a>
                         </li>
                     </ul>
                 </nav>
@@ -80,6 +64,34 @@
         </div>
     </div>
 </template>
+
+<script setup>
+import Alert from '@/components/Alert.vue';
+import Loader from '@/components/Loader.vue';
+import { useProductStore } from '@/stores/productStore';
+import { onMounted, ref, watchEffect } from 'vue';
+
+const productStore = useProductStore();
+const totalPages = ref([]);
+
+// Load products on component mount
+onMounted(() => {
+    productStore.getProducts();
+});
+
+watchEffect(() => {
+  if (productStore.lastPage > 1) {
+    totalPages.value = Array.from({ length: productStore.lastPage }, (_, index) => index + 1);
+  }
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= productStore.lastPage) {
+    productStore.getProducts(page);
+  }
+};
+
+</script>
 
 <style scoped>
 ul,

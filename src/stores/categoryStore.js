@@ -34,6 +34,19 @@ export const useCategoryStore = defineStore("CategoryStore", {
       }
     },
 
+    async getAllCategories() {
+      this.isLoading = ref(true);
+      const data = await categoryService.getAllCategories();
+
+      if (data.success === false) {
+        this.errors = data.errors;
+        this.isLoading = ref("");
+      } else {
+        this.categories = data;
+        this.isLoading = ref("");
+      }
+    },
+
     async getCategory(id) {
       this.isLoading = ref(true);
       const data = await categoryService.getCategory(id);
