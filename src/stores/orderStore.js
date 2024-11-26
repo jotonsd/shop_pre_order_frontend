@@ -15,6 +15,7 @@ export const useOrderStore = defineStore("OrderStore", {
       successMessage: "",
       errorMessage: "",
       isLoading: ref(),
+      userRole: localStorage.getItem("userRole"),
     };
   },
   actions: {
@@ -57,7 +58,7 @@ export const useOrderStore = defineStore("OrderStore", {
       } else {
         this.successMessage = "Order created successfully!";
         this.isLoading = ref("");
-        router.push({ name: "orders" });
+        router.push({ name: "welcome" });
       }
     },
 

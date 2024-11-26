@@ -26,10 +26,10 @@
                             <td>{{ order.phone }}</td>
                             <td class="text-center">
                                 <router-link :to="{ name: 'viewOrder', params: { id: order.id } }"
-                                    class="btn btn-sm btn-info me-1">View</router-link>
-                                <router-link :to="{ name: 'updateOrder', params: { id: order.id } }"
+                                    class="btn btn-sm btn-success me-1">View</router-link>
+                                <router-link v-if="orderStore.userRole === 'admin'" :to="{ name: 'updateOrder', params: { id: order.id } }"
                                     class="btn btn-sm btn-info me-1">Edit</router-link>
-                                <router-link to="#" class="btn btn-sm btn-danger">Delete</router-link>
+                                <button v-if="orderStore.userRole === 'admin'"  @click="orderStore.deleteOrder(order.id)" class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
                     </tbody>

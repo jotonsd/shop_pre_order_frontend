@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <div class="card mt-3">
+            <Alert v-if="useOrderStore.successMessage" :type="'success'" :message="useOrderStore.successMessage" />
             <form  @submit.prevent="() => { orderStore.storeOrder(formData) }">
                 <div class="card-header d-flex justify-content-between">
                     Create New Order
@@ -13,17 +14,21 @@
                     <div class="form-group mb-2">
                         <label for="name" class="form-label">Name</label>
                         <input v-model="formData.name" type="text" class="form-control" id="name" placeholder="Enter your name">
+                        <span v-if="orderStore.errors.name" class="text-danger">{{ orderStore.errors.name[0] }}</span>
                     </div>
                     <div class="form-group mb-2">
                         <label for="email" class="form-label">Email</label>
                         <input v-model="formData.email" type="email" class="form-control" id="email" placeholder="Enter your email">
+                        <span v-if="orderStore.errors.email" class="text-danger">{{ orderStore.errors.email[0] }}</span>
                     </div>
                     <div class="form-group mb-2">
                         <label for="phone" class="form-label">Phone</label>
                         <input v-model="formData.phone" type="text" class="form-control" id="phone" placeholder="Enter your phone number">
+                        <span v-if="orderStore.errors.phone" class="text-danger">{{ orderStore.errors.phone[0] }}</span>
                     </div>
 
                     <h6><b>Order Details</b></h6>
+                        <span v-if="orderStore.errors.details" class="text-danger">{{ orderStore.errors.details[0] }}<br/></span>
                     <div v-for="(details, index) in formData.details" :key="index" class="row">
                         <!-- Category Select -->
                         <div class="col-md-3">
@@ -108,6 +113,7 @@ import { useOrderStore } from '@/stores/orderStore';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { useProductStore } from '@/stores/productStore';
 import { onMounted, reactive } from 'vue';
+import Alert from '@/components/Alert.vue';
 
 const orderStore = useOrderStore();
 const categoryStore = useCategoryStore();
