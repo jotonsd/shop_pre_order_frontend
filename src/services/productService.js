@@ -5,6 +5,10 @@ class ProductService {
     return await apiClient.get(`/products?page=${page}`);
   }
 
+  async getAllProducts(page = 1) {
+    return await apiClient.get(`/products-all`);
+  }
+
   async getProduct(id) {
     return await apiClient.get(`/products/` + id);
   }

@@ -1,14 +1,14 @@
 import { defineStore } from "pinia";
 import router from "../router";
-import productService from "@/services/productService";
+import orderService from "@/services/orderService";
 import { ref } from "vue";
 
-export const useProductStore = defineStore("ProductStore", {
+export const useOrderStore = defineStore("OrderStore", {
   state: () => {
     return {
-      products: [],
+      orders: [],
       errors: {},
-      product: {},
+      order: {},
       currentPage: 1,
       lastPage: 1,
       total: 0,
@@ -18,15 +18,15 @@ export const useProductStore = defineStore("ProductStore", {
     };
   },
   actions: {
-    async getProducts(page = 1) {
+    async getOrders(page = 1) {
       this.isLoading = ref(true);
-      const data = await productService.getProducts(page);
+      const data = await orderService.getOrders(page);
 
       if (data.success === false) {
         this.errors = data.errors;
         this.isLoading = ref("");
       } else {
-        this.products = data.data;
+        this.orders = data.data;
         this.currentPage = data.current_page;
         this.lastPage = data.last_page;
         this.total = data.total;
@@ -34,72 +34,69 @@ export const useProductStore = defineStore("ProductStore", {
       }
     },
 
-    async getAllProducts() {
+    async getOrder(id) {
       this.isLoading = ref(true);
-      const data = await productService.getAllProducts();
+      const data = await orderService.getOrder(id);
 
       if (data.success === false) {
         this.errors = data.errors;
         this.isLoading = ref("");
       } else {
-        this.products = data;
+        this.order = data;
         this.isLoading = ref("");
       }
     },
 
-    async getProduct(id) {
+    async storeOrder(formData) {
       this.isLoading = ref(true);
-      const data = await productService.getProduct(id);
+      const data = await orderService.storeOrder(formData);
 
       if (data.success === false) {
         this.errors = data.errors;
         this.isLoading = ref("");
       } else {
-        this.product = data;
+        this.successMessage = "Order created successfully!";
         this.isLoading = ref("");
-        router.push({ name: "updateProduct", params: { id: id } });
+        router.push({ name: "orders" });
       }
     },
 
-    async storeProduct(formData) {
+    async updateOrder(formData, id) {
       this.isLoading = ref(true);
-      const data = await productService.storeProduct(formData);
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        details: formData.details.map((detail) => ({
+          id: detail.id, // Detail ID for updates
+          product_id: detail.product_id, // Selected product ID
+          quantity: detail.quantity, // Quantity
+        })),
+      };
+      console.log(payload);
+      const data = await orderService.updateOrder(payload, id);
 
       if (data.success === false) {
         this.errors = data.errors;
         this.isLoading = ref("");
       } else {
-        this.successMessage = "Product created successfully!";
+        this.successMessage = "Order updated successfully!";
         this.isLoading = ref("");
-        router.push({ name: "products" });
+        router.push({ name: "orders" });
       }
     },
 
-    async updateProduct(formData, id) {
+    async deleteOrder(id) {
       this.isLoading = ref(true);
-      const data = await productService.updateProduct(formData, id);
+      const data = await orderService.deleteOrder(id);
 
       if (data.success === false) {
         this.errors = data.errors;
         this.isLoading = ref("");
       } else {
-        this.successMessage = "Product updated successfully!";
+        this.successMessage = "Order deleted successfully!";
         this.isLoading = ref("");
-        router.push({ name: "products" });
-      }
-    },
-
-    async deleteProduct(id) {
-      this.isLoading = ref(true);
-      const data = await productService.deleteProduct(id);
-
-      if (data.success === false) {
-        this.errors = data.errors;
-        this.isLoading = ref("");
-      } else {
-        this.successMessage = "Product deleted successfully!";
-        this.isLoading = ref("");
-        this.getProducts();
+        this.getOrders();
       }
     },
   },

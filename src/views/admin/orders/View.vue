@@ -1,6 +1,3 @@
-<script setup>
-</script>
-
 <template>
     <div class="container">
         <div class="row">
@@ -18,7 +15,7 @@
                                     Name:
                                 </div>
                                 <div class="col-md-8">
-                                    Joton Sutradhar
+                                    {{ orderStore.order.name }}
                                 </div>
                             </div>
                             <div class="row">
@@ -26,7 +23,7 @@
                                     Email:
                                 </div>
                                 <div class="col-md-8">
-                                    jotonsutradharjoy@gmail.com
+                                    {{ orderStore.order.email }}
                                 </div>
                             </div>
                             <div class="row">
@@ -34,7 +31,7 @@
                                     Phone:
                                 </div>
                                 <div class="col-md-8">
-                                    01518604807
+                                    {{ orderStore.order.phone }}
                                 </div>
                             </div>
                         </div>
@@ -63,29 +60,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row" class="text-center">1</th>
-                                    <td>Apple</td>
-                                    <td>Apple 14 Pro</td>
-                                    <td>1000</td>
-                                    <td>3</td>
-                                    <td>3000</td>
+                                <tr v-for="(item, index) in orderStore.order.details" :key="item.id">
+                                    <th scope="row" class="text-center">{{ ++index }}</th>
+                                    <td>{{ item.product.category.name }}</td>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.product.price}}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.total_price }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="text-center">2</th>
-                                    <td>Samsung</td>
-                                    <td>Samsung S23</td>
-                                    <td>800</td>
-                                    <td>4</td>
-                                    <td>3200</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="text-center">3</th>
-                                    <td>Xiomi</td>
-                                    <td>Xiomi Mi A3</td>
-                                    <td>500</td>
-                                    <td>1</td>
-                                    <td>500</td>
+                                    <td colspan="5" class="text-end"><strong>Grand Total</strong></td>
+                                    <td>{{ grandTotal }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -96,3 +81,23 @@
         </div>
     </div>
 </template>
+<script setup>
+import { useOrderStore } from '@/stores/orderStore';
+import { onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const orderId = route.params.id;
+
+const orderStore = useOrderStore();
+
+// Load orders on component mount
+onMounted(() => {
+    orderStore.getOrder(orderId);
+});
+
+const grandTotal = computed(() => {
+    return orderStore.order.details?.reduce((sum, item) => sum + Number(item.total_price), 0) || 0;
+});
+
+</script>
