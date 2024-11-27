@@ -22,6 +22,7 @@ git clone https://github.com/jotonsd/shop_pre_order_frontend.git
 ▶️ Run the below command to install npm dependencies
 
 ```sh
+cd shop_pre_order_frontend
 npm install
 ```
 
