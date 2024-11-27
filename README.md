@@ -1,8 +1,16 @@
-# Shop Pre-order Form Frontend
+# 🛒 Shop Pre-order Form Frontend
+
+👍 In the pre-order form application, we can create a pre-order with contact information and multiple item selection. <br>
+## 🪶 Features
+➖ In this application you can manage users, categories, products, and orders<br>
+➖ Admin can create, update, and delete operations<br>
+➖ The manager can only view the order items.<br>
+➖ Guest user, admin, and manager both can create pre-orders <br>
+➖ Order can be searched by name, email <br>
+➖ Pagination used <br>
 
 ## 🏹 Requirments
-Node Version: v20.15.0 
-
+Node Version: v20.15.0 <br>
 npm: 10.8.1
 
 ## ⚙️ Installation guideline
