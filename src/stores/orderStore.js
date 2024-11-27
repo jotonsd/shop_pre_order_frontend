@@ -35,6 +35,25 @@ export const useOrderStore = defineStore("OrderStore", {
       }
     },
 
+    async searchOrder(formData, page = 1) {
+      console.log(formData.query);
+      this.isLoading = ref(true);
+      const data = await orderService.searchOrder(formData.query, page);
+
+      console.log(data);
+
+      if (data.success === false) {
+        this.errors = data.errors;
+        this.isLoading = ref("");
+      } else {
+        this.orders = data.data;
+        this.currentPage = data.current_page;
+        this.lastPage = data.last_page;
+        this.total = data.total;
+        this.isLoading = ref("");
+      }
+    },
+
     async getOrder(id) {
       this.isLoading = ref(true);
       const data = await orderService.getOrder(id);

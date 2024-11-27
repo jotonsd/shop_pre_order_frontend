@@ -5,6 +5,10 @@ class OrderService {
     return await apiClient.get(`/pre-orders?page=${page}`);
   }
 
+  async searchOrder(query, page = 1) {
+    return await apiClient.get(`/pre-orders/search/${query}?page=${page}`);
+  }
+
   async getOrder(id) {
     return await apiClient.get(`/pre-orders/` + id);
   }

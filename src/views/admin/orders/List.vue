@@ -8,6 +8,18 @@
                 Order List
             </div>
             <div class="card-body">
+                <form  @submit.prevent="() => { orderStore.searchOrder(formData) }">
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input v-model="formData.query" type="text" class="form-control" placeholder="Name or email">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success">Search</button>
+                        </div>
+                    </div>
+                </form>
                 <table class="table table-striped table-bordered">
                     <thead class="table-success text-center">
                         <tr>
@@ -67,7 +79,7 @@
 import Alert from '@/components/Alert.vue';
 import Loader from '@/components/Loader.vue';
 import { useOrderStore } from '@/stores/orderStore';
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect, reactive } from 'vue';
 
 const orderStore = useOrderStore();
 const totalPages = ref([]);
@@ -88,6 +100,10 @@ const changePage = (page) => {
         orderStore.getOrders(page);
     }
 };
+
+const formData = reactive({
+    'query': ""
+});
 
 </script>
 
